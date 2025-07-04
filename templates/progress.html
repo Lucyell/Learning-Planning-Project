@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>学习进度</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #eef2f5; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 6px #999; }
+    .bar-bg { background: #ddd; height: 20px; border-radius: 10px; overflow: hidden; margin-top: 1rem; }
+    .bar-fill { background: #007bff; height: 100%; width: 0%; transition: width 0.5s; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📈 当前学习进度</h2>
+    <p id="info"></p>
+    <div class="bar-bg"><div id="bar" class="bar-fill"></div></div>
+  </div>
+  <script>
+    fetch('/api/progress?user_id=' + localStorage.getItem('user_id'))
+      .then(res => res.json())
+      .then(data => {
+        const percent = data.progress_percentage || 0;
+        document.getElementById('bar').style.width = percent + '%';
+        document.getElementById('info').textContent = `已完成 ${data.completed_days}/${data.total_days} 天，进度：${percent.toFixed(1)}%`;
+      });
+  </script>
+</body>
+</html>

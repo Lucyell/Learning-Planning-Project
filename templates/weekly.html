@@ -1,0 +1,25 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>周报总结</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f5f5f5; }
+    .container { max-width: 800px; margin: auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 6px #aaa; }
+    pre { white-space: pre-wrap; background: #eef; padding: 1rem; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📊 本周学习总结</h2>
+    <pre id="report">正在加载...</pre>
+  </div>
+  <script>
+    fetch('/api/weekly_report?user_id=' + localStorage.getItem('user_id'))
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('report').textContent = data.report;
+      });
+  </script>
+</body>
+</html>

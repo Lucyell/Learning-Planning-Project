@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>学程通 - 学习计划生成工具</title>
+
+  <!-- 外部图标库 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- 所有 CSS 样式写在这里 -->
+  <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+          margin: 0;
+          padding: 0;
+          min-height: 100vh;
+          font-family: 'Segoe UI', sans-serif;
+          background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+          padding-top: 80px; /* 为固定导航栏留出空间 */
+          overflow-x: hidden; /* 隐藏横向滚动条 */
+        }
+        
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 20px;
+          display: flex;              /* 启用Flex布局 */
+          flex-direction: column;     /* 垂直排列子元素 */
+          align-items: center;        /* 水平居中 */
+        }
+        
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 0 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        nav:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 80px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(75, 108, 183, 0.3);
+        }
+        
+        .logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #182848 0%, #4b6cb7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+        
+        .nav-link i {
+            margin-right: 10px;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-link:hover i {
+            transform: scale(1.2);
+        }
+        
+        .nav-link.home {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565c0;
+            border: 2px solid #90caf9;
+        }
+        
+        .nav-link.focus {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #2e7d32;
+            border: 2px solid #a5d6a7;
+        }
+        
+        .nav-link.report {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            color: #ef6c00;
+            border: 2px solid #ffcc80;
+        }
+        
+        .nav-link.plan {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            color: #7b1fa2;
+            border: 2px solid #ce93d8;
+        }
+        
+        .nav-link.login {
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(75, 108, 183, 0.4);
+        }
+        
+        .nav-link.login:hover {
+            box-shadow: 0 7px 20px rgba(75, 108, 183, 0.6);
+        }
+        
+        /* 内容区域 */
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            margin: 30px 0;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #182848 0%, #4b6cb7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            color: #555;
+            line-height: 1.7;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-card i {
+            font-size: 50px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #182848;
+        }
+        
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .mobile-toggle {
+            display: none;
+            font-size: 24px;
+            color: #182848;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 992px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .logo-icon {
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        .nav-link {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+    /* 模糊玻璃卡片容器 */
+    .form-container {
+      margin: 40px auto;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      max-width: 500px;
+      width: 90%;
+      margin-bottom: 40px;
+    }
+
+    .form-wrapper {
+      display: flex;
+      justify-content: center; /* 水平居中 */
+      align-items: center;
+      min-height:  calc(100vh - 导航栏高度等);
+    }
+
+    .title {
+      font-size: 1.8em;
+      margin-bottom: 25px;
+      text-align: center;
+      color: #1e3a8a;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      background-color: rgba(255,255,255,0.9);
+      transition: 0.3s border;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #3b82f6;
+      outline: none;
+    }
+
+    #generateBtn {
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: white;
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+
+    #generateBtn:hover {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+    }
+
+    .loader {
+      display: none;
+      margin: 15px auto;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #555;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0); }
+      100% { transform: rotate(360deg); }
+    }
+    .output-container {
+    /* 移除导致全屏的样式 */
+    min-height: auto;           
+    padding: 40px;              /* 减少内边距 */
+    
+    /* 保留核心布局样式 */
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    max-width: 800px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    color: #333;
+    animation: fadeIn 0.6s ease;
+    display: block;             /* 恢复为块级元素 */
+    margin: 0 auto 60px;        /* 水平居中+底部间距 */
+    max-height: 200vh; /* 限制输出区最大高度 */
+    overflow-y: auto; /* 超出高度显示滚动条 */
+}
+
+  .output-title {
+    font-size: 1.6em;
+    margin-bottom: 20px;
+    color: #1e3a8a;
+    border-bottom: 2px solid #90caf9;
+    padding-bottom: 10px;
+  }
+
+  .output-content h1, .output-content h2, .output-content h3 {
+    margin-top: 24px;
+    margin-bottom: 10px;
+    color: #2c3e50;
+  }
+
+  .output-content p {
+    margin-bottom: 12px;
+    line-height: 1.7;
+    color: #444;
+  }
+
+  .output-content ul {
+    padding-left: 20px;
+    margin-bottom: 15px;
+  }
+
+  .output-content li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .output-content a {
+    color: #3b82f6;
+    text-decoration: underline;
+  }
+
+  .output-content a:hover {
+    color: #1d4ed8;
+  }
+
+  /* 公共样式 */
+.md-heading-box {
+  border: 1px solid #ddd;
+  background: #fafafa;
+  padding: 0.6em 1em;
+  border-radius: 0.6em;
+  margin: 1em 0;
+}
+/* 一级标题专属 */
+.md-heading-1 {
+  background: #e3f2fd;
+  border-color: #90caf9;
+}
+/* 二级标题专属 */
+.md-heading-2 {
+  background: #fff3e0;
+  border-color: #ffb74d;
+}
+/* 让内部的 h1、h2 标题去掉原有外边距 */
+.md-heading-box h1,
+.md-heading-box h2 {
+  margin: 0;
+}
+
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+    </style>
+
+  <!-- marked.js 解析器 -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+  <!-- 顶部导航栏 -->
+  <header>
+    <nav>
+      <div class="nav-container">
+        <a href="#" class="logo">
+          <div class="logo-icon"><i class="fas fa-book"></i></div>
+          <span class="logo-text">学程通</span>
+        </a>
+        <div class="nav-links">
+            <a href="main.html" class="nav-link home">
+                <i class="fas fa-home"></i>首页
+            </a>
+            <a href="zhuanzhu.html" class="nav-link focus">
+                <i class="fas fa-clock"></i>专注模式
+            </a>
+            <a href="generate.html" class="nav-link plan">
+                <i class="fas fa-calendar-check"></i>生成计划
+            </a>
+            <a href="login.html" class="nav-link login">
+                <i class="fas fa-user-circle"></i>登录
+            </a>
+        </div>
+        <div class="mobile-toggle"><i class="fas fa-bars"></i></div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- 主体内容：生成计划表单 -->
+  <div class="form-container">
+    <h2 class="title">📘 生成你的专属学习计划</h2>
+
+    <div class="form-group">
+      <label for="subject">学习科目</label>
+      <input id="subject" placeholder="例如：操作系统、线性代数…" />
+    </div>
+
+    <div class="form-group">
+      <label for="days">学习天数</label>
+      <input id="days" type="number" min="1" value="7" />
+    </div>
+
+    <div class="form-group">
+      <label for="level">学习目标</label>
+      <select id="level">
+        <option value="入门">入门</option>
+        <option value="精通">精通</option>
+        <option value="专家">专家</option>
+      </select>
+    </div>
+
+    <button id="generateBtn" onclick="generate()">🎯 生成计划</button>
+    <div class="loader" id="loader"></div>
+  </div>
+
+  <!-- 输出区域（你可以在这里美化） -->
+  <!-- 输出区域 -->
+<div class="output-container" id="output"></div>
+
+<!-- 脚本逻辑 -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+
+  // --------- 全局只执行一次的初始化 ---------
+  // 1) 创建一个 Slugger 用于生成 id
+  const slugger = new marked.Slugger();
+
+  // 2) 创建自定义 Renderer
+  const renderer = new marked.Renderer();
+
+  renderer.heading = (text, level, raw) => {
+    // 仅对一级、二级标题包裹一个带类名的容器
+    if (level === 1 || level === 2) {
+      const id = slugger.slug(raw);
+      return `
+        <div class="md-heading-box md-heading-${level}">
+          <h${level} id="${id}">${text}</h${level}>
+        </div>
+      `;
+    }
+    // 其他标题正常渲染
+    const id = slugger.slug(raw);
+    return `<h${level} id="${id}">${text}</h${level}>\n`;
+  };
+
+  // 3) 告诉 marked 使用上面这个 renderer
+  marked.use({ renderer });
+
+
+  function wrapHeadings(container) {
+    // container 是你存放渲染结果的 DOM 节点，比如 document.getElementById('output')
+    // 我们要在它里面找所有的 h1 和 h2
+    const headings = container.querySelectorAll('h1, h2');
+    headings.forEach(h => {
+      // 跳过已经包过的，避免重复包装
+      if (h.parentElement.classList.contains('md-heading-box')) return;
+
+      // 创建一个 wrapper div
+      const box = document.createElement('div');
+      box.classList.add('md-heading-box', `md-heading-${h.tagName === 'H1' ? 1 : 2}`);
+
+      // 把 h 节点搬进 box，再把 box 插到原位
+      h.replaceWith(box);
+      box.appendChild(h);
+    });
+  }
+
+  // --------- 生成函数 ---------
+  async function generate() {
+    const subject = document.getElementById("subject").value.trim();
+    const days    = parseInt(document.getElementById("days").value, 10);
+    const level   = document.getElementById("level").value;
+    const loader  = document.getElementById("loader");
+    const output  = document.getElementById("output");
+
+    // 输入校验
+    if (!subject || isNaN(days) || days <= 0) {
+      alert("请填写完整信息！");
+      return;
+    }
+
+    // 显示 loading
+    loader.style.display = "block";
+    output.innerHTML = "";
+
+    try {
+      const resp = await fetch("/api/generate_plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: localStorage.getItem("user_id"),
+          subject,
+          days,
+          level
+        })
+      });
+
+      if (!resp.ok) {
+        throw new Error(`服务器错误：${resp.status}`);
+      }
+
+      const data = await resp.json();
+      const md   = data.plan_content;
+
+      // 渲染并套一层 .output-content，确保 CSS 生效
+      output.innerHTML = `
+        <div class="output-content">
+          ${marked.parse(md)}
+        </div>
+      `;
+      wrapHeadings(output);
+
+      // 存储生成记录
+      localStorage.setItem('generatedPlan', JSON.stringify({ subject, days, level }));
+    } catch (err) {
+      console.error(err);
+      output.innerHTML = `<p style="color: red;">生成失败：${err.message}</p>`;
+    } finally {
+      loader.style.display = "none";
+    }
+  }
+  marked.parse()
+</script>
+
+
+</body>
+</html>
+
